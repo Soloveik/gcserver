@@ -1,0 +1,15 @@
+production:
+  adapter: postgresql
+  encoding: unicode
+  host: postgresql7.locum.ru
+  database: nerrey_gcserve11
+  username: nerrey_gcserve11
+  password: HEgsGZ3nuE
+
+development:
+  adapter: postgresql
+  encoding: unicode
+  host: localhost
+  database: gcserver
+  username: ns
+  password: 14156
