@@ -9,8 +9,6 @@ class MainController < ApplicationController
 
   def test
     $server = TCPServer.new('simply.su',4000)
-    $server.setsockopt(:SOCKET, :REUSEADDR, 1)
-    $server.setsockopt(:SOCKET, :REUSEPORT, 1)
     loop do
       Thread.start($server.accept) do |client|
         # chain= client.gets
