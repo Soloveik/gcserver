@@ -26,5 +26,23 @@ class MainController < ApplicationController
     render text: "closed"
   end
 
+  def start_socket
+    $redis.set("socket", "on")
+    Thread.new{
+      system "rake socketserver"
+    }
+    render text: "socket is go"
+  end
+
+  def close_socket
+    $redis.set("socket", "off")
+    comm = %x[lsof -wni tcp:4001|awk '{print $2}']
+    system("kill -9 #{comm.split("\n")[1]}")
+    # Thread.new{
+    #   system "rake socketclient"
+    # }
+    render text: "socket off"
+  end
+
 end
 

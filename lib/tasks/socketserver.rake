@@ -1,14 +1,16 @@
 require 'socket'
 task :socketserver => :environment do 
-  # $server = TCPServer.new('localhost',4000)
-  # loop do
-  #   Thread.start($server.accept) do |client|
-  #     # chain= client.gets
-  #     # puts client.gets
-  #     client.puts "1234" 
-  #     client.close
-  #   end
-  # end
-  # puts "done"
+  $server = TCPServer.new('simply.su',4001)
+  # puts $server.inspect
+  
+  while $redis.get("socket") == "on"
+    # puts $server.inspect
+    Thread.start($server.accept) do |client|
+      client.puts "1234567" 
+      # puts $server.inspect
+      client.close
+    end
+  end
+  puts "done"
 end
 
