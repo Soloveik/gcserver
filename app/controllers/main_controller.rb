@@ -27,7 +27,7 @@ class MainController < ApplicationController
   end
 
   def start_socket
-    $redis.set("socket", "on")
+    $flagsocket = true
     Thread.new{
       system "rake socketserver"
     }
@@ -35,7 +35,7 @@ class MainController < ApplicationController
   end
 
   def close_socket
-    $redis.set("socket", "off")
+    $flagsocket = false
     comm = %x[lsof -wni tcp:4001|awk '{print $2}']
     system("kill -9 #{comm.split("\n")[1]}")
     # Thread.new{
