@@ -27,7 +27,6 @@ class MainController < ApplicationController
   end
 
   def start_socket
-    $flagsocket = true
     Thread.new{
       system "rake socketserver"
     }
