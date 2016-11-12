@@ -1,29 +1,11 @@
 require 'gcapi'
 require 'socket'
+require 'fast_base'
 class MainController < ApplicationController
-
+  before_action :fb_init, only: [:set_inf, :get_inf, :del_inf_by_val, :del_inf_by_key, :del_inf_all]
   def index
     a = Gcapi.new("shmoken").method
     render text: a
-  end
-
-  def test
-    $server = TCPServer.new('simply.su',4000)
-    loop do
-      Thread.start($server.accept) do |client|
-        # chain= client.gets
-        # puts client.gets
-        client.puts "123" 
-        client.close
-      end
-    end
-    render text: "hi"
-  end
-
-  def testclose
-
-    $server.close
-    render text: "closed"
   end
 
   def start_socket
@@ -43,5 +25,36 @@ class MainController < ApplicationController
     render text: "socket off"
   end
 
+  def set_inf
+    @fb.set(params[:key], params[:value])
+    render text: "redis set"
+  end
+
+  def get_inf
+    render text: @fb.get(params[:key]).inspect
+  end
+
+  # def del_inf_by_val
+  #   @fb.del_by_val(params[:key], params[:value])
+  #   render text: "OK"  
+  # end
+
+  def del_inf_by_key
+    @fb.del_by_key(params[:key])
+    render text: "OK"
+  end
+
+  def del_inf_all
+    @fb.del_all
+    render text: "OK"
+  end
+
+  private
+
+  def fb_init
+    @fb = FastBase.new
+  end
 end
+
+
 
