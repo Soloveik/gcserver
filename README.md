@@ -1,24 +1,25 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+API Documentation
 
-Things you may want to cover:
+WRY
+GET,POST /api/wry
+request
+	params	json:	
+		owner(phone)
+		target(phone)
+response
+	json:
+		status
+		method
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+WRYG
+GET,POST /api/wryg
+request
+	params	json:	
+		owner(phone)
+		target(id_group)
+response
+	json:
+		status
+		method
