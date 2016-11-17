@@ -26,6 +26,14 @@ class FastBase
   #   puts "gcserver|#{key}|#{@crypta.crypt(value)}"
   #   $redis.del("gcserver|#{key}|#{@crypta.crypt(value)}")
   # end
+  def get_and_del_by_key(key)
+    keys = $redis.keys("gcserver|#{key}|*")
+    begin
+      $redis.del(keys)
+    rescue
+    end
+    keys
+  end
 
   def del_by_key(key)
     keys = $redis.keys("gcserver|#{key}|*")
@@ -37,6 +45,10 @@ class FastBase
     $redis.del(keys)
   end
   
+  def set_light(phone)
+    $redis.set("gcserver|light#{phone}|", 0)
+  end
+
   private
 
   def set_to_redis(key, value)

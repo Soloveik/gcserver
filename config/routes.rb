@@ -12,12 +12,12 @@ Rails.application.routes.draw do
 
 
   match '/api/wry', to: "api#wry", as: :wry, via: [:get, :post]
-  match '/api/wryg', to: "api#wryg", as: :wryg, via: [:get, :post]
-  match '/api/imh', to: "api#imh", as: :imh, via: [:get, :post]
-  match '/api/imhg', to: "api#imhg", as: :imhg, via: [:get, :post]
-  match '/api/gmd', to: "api#gmd", as: :gmd, via: [:get, :post]
+  match '/api/wryg', to: "api#wry_group", as: :wry_group, via: [:get, :post]
+  match '/api/imh', to: "api#im_here", as: :im_here, via: [:get, :post]
+  match '/api/imhg', to: "api#im_here_group", as: :im_here_group, via: [:get, :post]
+  match '/api/gmd', to: "api#get_my_data", as: :get_my_data, via: [:get, :post]
   match '/api/im', to: "api#im", as: :im, via: [:get, :post]
-  match '/api/ng', to: "api#ng", as: :ng, via: [:get, :post]
+  match '/api/ng', to: "api#new_group", as: :new_group, via: [:get, :post]
   match '/test', to: "api#test", as: :test, via: [:get, :post]
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
