@@ -5,7 +5,7 @@ class Crypta
   
   end
 
-  def crypt(str)
+  def self.crypt(str)
     size = 145 - str.length
     trash = (0..size).map{("a".."z").to_a[rand(26)]}.join
     str += "|" + trash 
@@ -14,7 +14,7 @@ class Crypta
     [str[0..49], str[50..99], str[100..149], str[150..199]].reverse.join
   end
 
-  def decrypt(str)
+  def self.decrypt(str)
     str = [str[0..49], str[50..99], str[100..149], str[150..199]].reverse.join
     str = str.chop + "\n"
     str = Base64.decode64(str)

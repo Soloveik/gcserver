@@ -2,10 +2,10 @@ class FastBase
   require "crypta"
   
   def initialize
-    @crypta = Crypta.new
+    
   end
 
-  def set(key, value)
+  def self.set(key, value)
     case value
     when String
       set_to_redis(key, value)
@@ -15,18 +15,18 @@ class FastBase
     end
   end
 
-  def get(key)
+  def self.get(key)
     $redis.keys("gcserver|#{key}|*").map do |val| 
       val = val.gsub("gcserver|#{key}|", "")
-      @crypta.decrypt(val)
+      Crypta.decrypt(val)
     end
   end
   
   # def del_by_val(key, value)
-  #   puts "gcserver|#{key}|#{@crypta.crypt(value)}"
-  #   $redis.del("gcserver|#{key}|#{@crypta.crypt(value)}")
+  #   puts "gcserver|#{key}|#{Crypta.crypt(value)}"
+  #   $redis.del("gcserver|#{key}|#{Crypta.crypt(value)}")
   # end
-  def get_and_del_by_key(key)
+  def self.get_and_del_by_key(key)
     keys = $redis.keys("gcserver|#{key}|*")
     begin
       $redis.del(keys)
@@ -35,24 +35,24 @@ class FastBase
     keys
   end
 
-  def del_by_key(key)
+  def self.del_by_key(key)
     keys = $redis.keys("gcserver|#{key}|*")
     $redis.del(keys)
   end
 
-  def del_all
+  def self.del_all
     keys = $redis.keys("gcserver|*")
     $redis.del(keys)
   end
   
-  def set_light(phone)
+  def self.set_light(phone)
     $redis.set("gcserver|light#{phone}|", 0)
   end
 
   private
 
   def set_to_redis(key, value)
-    $redis.set("gcserver|#{key}|#{@crypta.crypt(value)}", 0)
+    $redis.set("gcserver|#{key}|#{Crypta.crypt(value)}", 0)
   end
 
 end
