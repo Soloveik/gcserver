@@ -2,6 +2,16 @@ class Emulator
   require "net/http"
   require "socket"
   
+  @@SOCKET_SERVER_RESPONSE = "take_your_data"
+  @@SEND_TO_SERVER_SOCKET  = "1234567890gmd?"
+  @@API_METHOD_PATH_WRY = "/api/wry"
+  @@API_METHOD_PATH_WRYG = "/api/wryg"
+  @@API_METHOD_PATH_IMH = "/api/imh"
+  @@API_METHOD_PATH_IMHG = "/api/imhg"
+  @@API_METHOD_PATH_GMD = "/api/gmd"
+  @@API_METHOD_PATH_IM = "/api/im"
+  @@API_METHOD_PATH_NG = "/api/ng"
+
   def initialize(user_id, host, api_port, socket_port)
     @user = User.where(id: user_id).first
     @user = User.create(phone: [0..9].map{|e| ["a".."z"][rand(25)]}.join) unless @user
@@ -13,72 +23,74 @@ class Emulator
 
   def cycle(sec)
     begin
+      target = [0..9].map{|e| ["a".."z"][rand(25)]}.join
       iteration = 0
       null_time = Time.now.to_i
       while((Time.now.to_i - null_time) < sec)
+        message(%q{&#8625} + "**********************************************")
         message(">>  #{iteration} iteration start")
         # message(Time.now.to_i - null_time)
-
-        wry(target) if rand(5)==0
+        
+        message("|<- " + wry(target).to_s) if rand(5)==0
 
         if knock("#{@host}", @socket_port)
-          mydata = get_my_data([0..9].map{|e| ["a".."z"][rand(25)]}.join)
-          message("|<- " + mydata)
+          message("|<- " + get_my_data(@user.phone).to_s)
         end
-
+        sleep 1
         message("<<  #{iteration} iteration end")
-        message("-----------------------")
+        message("**********************************************\n\n")
+        message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
         iteration+=1
       end
       # puts send_request("http://#{@host}:#{@api_port}/api/gmd")
     rescue => e
-      message e
+      error_message e
     end
   end
 
   def wry target
     data = {owner: @user.phone, target: target}
-    send_request("/api/wry", data)
+    send_request(@@API_METHOD_PATH_WRY, data)
   end
 
   def wry_group target
     data = {owner: @user.phone, target: target}
-    send_request("/api/wryg", data)
+    send_request(@@API_METHOD_PATH_WRYG, data)
   end
 
   def im_here target
     data = {owner: @user.phone, target: target}
-    send_request("/api/imh", data)
+    send_request(@@API_METHOD_PATH_IMH, data)
   end
 
   def im_here_group target
     data = {owner: @user.phone, target: target}
-    send_request("/api/imhg", data)
+    send_request(@@API_METHOD_PATH_IMHG, data)
   end
 
   def get_my_data target
     data = {owner: @user.phone}
-    send_request("/api/gmd", data)
+    send_request(@@API_METHOD_PATH_GMD, data)
   end
 
   def im target
     data = {owner: @user.phone, target: target}
-    send_request("/api/im", data)
+    send_request(@@API_METHOD_PATH_IM, data)
   end
 
   def new_group target
     data = {owner: @user.phone, target: target}
-    send_request("/api/ng", data)
+    send_request(@@API_METHOD_PATH_NG, data)
   end
 
   def knock(host, port)
     begin
       Timeout.timeout(2) do
         socket = TCPSocket.open(host, port, 2)
-        socket.puts "1234567890gmd?"
+        socket.puts @@SEND_TO_SERVER_SOCKET
         result = socket.gets
         message "o-> " + result.to_s
-        if result.chop == "take_your_data"
+        if result.chop == @@SOCKET_SERVER_RESPONSE
           socket.close 
           message("some code after knock true")
           return true
@@ -93,7 +105,7 @@ class Emulator
       return false
     rescue => e
       message("some code after knock error")
-      message e
+      error_message e
       return false
     end
   end
@@ -104,7 +116,7 @@ class Emulator
     begin
 
     rescue => e
-      message e
+      error_message e
     end
   end
 
@@ -114,9 +126,26 @@ class Emulator
     puts "  " + str.to_s #+ " ------"
   end
 
+  def error_message str
+    puts "  ----- ERROR ---------------------------------"
+    end_str = ""
+    new_str = ""
+    str = str.to_s.split(" ").each do |e|
+      if(new_str.length < 30)
+        new_str += " " + e
+      else
+        new_str += " " + e +"\n"
+        end_str += "  | " + new_str
+        new_str = ""
+      end
+    end
+    puts end_str
+    puts "  ---------------------------------------------"
+  end
+
   def send_request(path, data)
-    uri = "http://#{@host}:#{@api_port}#{path}?#{data.to_query}"
     begin
+      uri = "http://#{@host}:#{@api_port}#{path}?#{data.to_query}"
       url = URI.parse(uri)
       req = Net::HTTP::Get.new(url.to_s)
       res = Net::HTTP.start(url.host, url.port) {|http|
@@ -124,8 +153,8 @@ class Emulator
       }
       res.body
     rescue => e
-      puts e
-      return nil
+      error_message e
+      return "[#{path} empty data]"
     end
   end
 
@@ -133,7 +162,7 @@ class Emulator
     begin
 
     rescue => e
-      puts e
+      error_message e
     end
   end
 
