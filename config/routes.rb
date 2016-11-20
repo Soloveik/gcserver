@@ -17,6 +17,6 @@ Rails.application.routes.draw do
   match '/api/ng', to: "api#new_group", as: :new_group, via: [:get, :post]
   match '/api/addutg', to: "api#add_user_to_group", as: :add_user_to_group, via: [:get, :post]
   match '/api/delufg', to: "api#del_user_from_group", as: :del_user_from_group, via: [:get, :post]
-  match '/test', to: "api#test", as: :test, via: [:get, :post]
+  match '/api/ltg', to: "api#leave_the_group", as: :leave_the_group, via: [:get, :post]
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

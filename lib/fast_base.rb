@@ -51,7 +51,7 @@ class FastBase
 
   private
 
-  def set_to_redis(key, value)
+  def self.set_to_redis(key, value)
     $redis.set("gcserver|#{key}|#{Crypta.crypt(value)}", 0)
   end
 
