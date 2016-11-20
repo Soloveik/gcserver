@@ -11,10 +11,9 @@ class ApiController < ApplicationController
   
   def wry
     data = wry_params
-    # puts data.blank?
     if !data[:owner].blank? &&  !data[:target].blank?
-      data = data[:date] = Time.now.strftime("%d/%m/%Y %H:%M:%S")
-      FastBase.set("wry", data.to_json)
+      data[:date] = Time.now.strftime("%d/%m/%Y %H:%M:%S")
+      FastBase.set("req|wry", data.to_json)
       request = {status: "OK", method: "wry"}
     else
       request = {status: "ERROR", method: "wry"}
@@ -25,8 +24,8 @@ class ApiController < ApplicationController
   def wry_group
     data = wry_params
     if !data[:owner].blank? &&  !data[:target].blank?
-      data = data[:date] = Time.now.strftime("%d/%m/%Y %H:%M:%S")
-      FastBase.set("wryg", data.to_json)
+      data[:date] = Time.now.strftime("%d/%m/%Y %H:%M:%S")
+      FastBase.set("req|wryg", data.to_json)
       request = {status: "OK", method: "wryg"}
     else
       request = {status: "ERROR", method: "wry_group"}
@@ -37,7 +36,7 @@ class ApiController < ApplicationController
   def im_here
     data = loc_params
     if !data[:owner].blank? && !data[:target].blank? && !data[:location].blank?
-      data = data[:date] = Time.now.strftime("%d/%m/%Y %H:%M:%S")
+      data[:date] = Time.now.strftime("%d/%m/%Y %H:%M:%S")
       FastBase.set(data[:target], data.to_json)
       request = {status: "OK", method: "imh"}
     else
@@ -49,7 +48,7 @@ class ApiController < ApplicationController
   def im_here_group
     data = loc_params
     if !data[:owner].blank? && !data[:target].blank? && !data[:location].blank?
-      data = data[:date] = Time.now.strftime("%d/%m/%Y %H:%M:%S")
+      data[:date] = Time.now.strftime("%d/%m/%Y %H:%M:%S")
       FastBase.set(data[:target], data.to_json)
       request = {status: "OK", method: "imhg"}
     else
@@ -100,7 +99,7 @@ class ApiController < ApplicationController
       group = Group.find(data[:id_group])
       if  group.users.map{|e| e[:phone]}.include?(data[:owner]) && !group.users.map{|e| e[:phone]}.include?(data[:need_add_user])
         group.users << User.where(phone: data[:need_add_user])
-        FastBase.set("autg", data.to_json)
+        FastBase.set("req|autg", data.to_json)
         request = {status: "OK", method: "add_user_to_group"}
       else
         request = {status: "ERROR", method: "add_user_to_group"}
@@ -118,7 +117,7 @@ class ApiController < ApplicationController
       group = Group.find(data[:id_group])
       if User.find(group[:admin]).phone == data[:owner]
         group.users.delete(User.where(phone: data[:need_del_user]))
-        FastBase.set("dufg", data.to_json)
+        FastBase.set("req|dufg", data.to_json)
         request = {status: "OK", method: "del_user_from_group"}
       else
         request = {status: "ERROR", method: "del_user_from_group"}
@@ -136,7 +135,7 @@ class ApiController < ApplicationController
       group = Group.find(data[:id_group])
       if  group.users.map{|e| e[:phone]}.include?(data[:owner])
         group.users.destroy(User.where(phone: data[:owner]).first)
-        FastBase.set("dufg", data.to_json)
+        FastBase.set("req|dufg", data.to_json)
         request = {status: "OK", method: "leave_the_group"}
       else
         request = {status: "ERROR", method: "leave_the_group"}
