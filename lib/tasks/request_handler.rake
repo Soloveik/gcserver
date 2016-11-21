@@ -11,13 +11,18 @@ task :resquest_handler => :environment do
     key = e[2]
     data = JSON.parse(Crypta.decrypt(e[3]))
     if key == "wry"
+      
       data_wry << data
     elsif key == "wryg"
+      
       data_wryg << data
     elsif key == "autg"
+      
       data_autg << data
     elsif key == "dufg"
+      
       data_dufg << data
     end
   end
+  puts data_wryg
 end
