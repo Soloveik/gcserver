@@ -49,7 +49,7 @@ class ApiController < ApplicationController
     data = loc_params
     if !data[:owner].blank? && !data[:target].blank? && !data[:location].blank?
       data[:date] = Time.now.strftime("%d/%m/%Y %H:%M:%S")
-      FastBase.set(data[:target], data.to_json)
+      FastBase.set("req|imhg", data.to_json)
       request = {status: "OK", method: "imhg"}
     else
       request = {status: "ERROR", method: "imhg"}

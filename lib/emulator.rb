@@ -14,7 +14,9 @@ class Emulator
 
   def initialize(user_id, host, api_port, socket_port)
     @user = User.where(id: user_id).first
-    @user = User.create(phone: [0..9].map{|e| ["a".."z"][rand(25)]}.join) unless @user
+    @goups = @user.groups
+    @location = "300x400x500"
+    # @user = User.create(phone: [0..9].map{|e| ["a".."z"][rand(25)]}.join) unless @user
     @host = host
     @api_port = api_port
     @socket_port = socket_port
@@ -23,15 +25,30 @@ class Emulator
 
   def cycle(sec)
     begin
-      target = [0..9].map{|e| ["a".."z"][rand(25)]}.join
+      # target = [0..9].map{|e| ["a".."z"][rand(25)]}.join
+      
+      target = User.where(id: rand(@user[:id]..1000))
       iteration = 0
       null_time = Time.now.to_i
       while((Time.now.to_i - null_time) < sec)
         message(%q{&#8625} + "**********************************************")
         message(">>  #{iteration} iteration start")
         # message(Time.now.to_i - null_time)
-        
-        message("|<- " + wry(target).to_s) if rand(5)==0
+        when rand(3)
+        case 0
+          message("|<- " + wry(target).to_s)
+        case 1
+          message("|<- " + wry_group(@groups.first.id).to_s)
+        case 2
+          message("|<- " + im_here(@groups.first.id).to_s)
+        case 3
+          message("|<- " + im_here_group(target).to_s) 
+        # case 4
+        #   message("|<- " + im(target).to_s)
+        # case 5
+        #   message("|<- " + new_group(target).to_s)
+        else
+        end
 
         if knock("#{@host}", @socket_port)
           message("|<- " + get_my_data(@user.phone).to_s)
@@ -59,12 +76,12 @@ class Emulator
   end
 
   def im_here target
-    data = {owner: @user.phone, target: target}
+    data = {owner: @user.phone, target: target, location: @location}
     send_request(@@API_METHOD_PATH_IMH, data)
   end
 
   def im_here_group target
-    data = {owner: @user.phone, target: target}
+    data = {owner: @user.phone, target: target, location: @location}
     send_request(@@API_METHOD_PATH_IMHG, data)
   end
 

@@ -14,27 +14,36 @@ task :resquest_handler => :environment do
       users.each do |p|
         if data[:owner] != p[:phone]
           data[:indicator] = "wryg"
-          FastBase.set(p[:phone], data.to_json)
+          FastBase.set(p.phone, data.to_json)
           FastBase.set_light(p[:phone])
         else
         end
       end
+    elsif key == "imhg"
+      users = Group.find(data[:target]).users
+      users.each do |p|
+        if data[:owner] != p[:phone]
+          data[:indicator] = "imhg"
+          FastBase.set(p.phone, data.to_json)
+          FastBase.set_light(p[:phone])
+        else
+        end
     elsif key == "autg"
       users = Group.find(data[:id_group]).users 
       users.each do |p|
         data[:indicator] = "autg"
-        FastBase.set(p[:phone], data.to_json)
-        FastBase.set_light(p[:phone])
+        FastBase.set(p.phone, data.to_json)
+        FastBase.set_light(p.phone)
       end
     elsif key == "dufg"
       users = Group.find(data[:id_group]).users 
       users.each do |p|
         data[:indicator] = "dufg"
-        FastBase.set(p[:phone], data.to_json)
-        FastBase.set(p[:need_add_or_del_user], data.to_json)
-        FastBase.set_light(p[:phone])
-        FastBase.set_light(p[:need_add_or_del_user])
+        FastBase.set(p.phone] data.to_json)
+        FastBase.set_light(p.phone)
       end
+      FastBase.set(data[:need_add_or_del_user], data.to_json)
+      FastBase.set_light(data[:need_add_or_del_user])
     end
   end
 end
