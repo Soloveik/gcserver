@@ -29,26 +29,6 @@ ActiveRecord::Schema.define(version: 20161105140033) do
     t.index ["user_id"], name: "index_groups_users_on_user_id", using: :btree
   end
 
-  create_table "requests", force: :cascade do |t|
-    t.integer  "owner_id"
-    t.integer  "target_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["owner_id"], name: "index_requests_on_owner_id", using: :btree
-    t.index ["target_id"], name: "index_requests_on_target_id", using: :btree
-  end
-
-  create_table "responses", force: :cascade do |t|
-    t.integer  "owner_id"
-    t.integer  "target_id"
-    t.integer  "request_id"
-    t.string   "location"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["owner_id"], name: "index_responses_on_owner_id", using: :btree
-    t.index ["target_id"], name: "index_responses_on_target_id", using: :btree
-  end
-
   create_table "users", force: :cascade do |t|
     t.string   "phone"
     t.datetime "created_at", null: false

@@ -1,28 +1,40 @@
 require "fast_base"
 task :resquest_handler => :environment do
   keys = FastBase.get_and_del_by_key("req")
-  data_wry = []
-  data_wryg = []
-  data_autg = []
-  data_dufg = []
   puts keys
-  keys.map do |e|
+  keys.each do |e|
     e = e.split("|")
     key = e[2]
     data = JSON.parse(Crypta.decrypt(e[3]))
     if key == "wry"
-      
-      data_wry << data
+      FastBase.set(data[:target], data.to_json)
+      FastBase.set_light(data[:target])
     elsif key == "wryg"
-      
-      data_wryg << data
+      users = Group.find(data[:target]).users 
+      users.each do |p|
+        if data[:owner] != p[:phone]
+          data[:indicator] = "wryg"
+          FastBase.set(p[:phone], data.to_json)
+          FastBase.set_light(p[:phone])
+        else
+        end
+      end
     elsif key == "autg"
-      
-      data_autg << data
+      users = Group.find(data[:id_group]).users 
+      users.each do |p|
+        data[:indicator] = "autg"
+        FastBase.set(p[:phone], data.to_json)
+        FastBase.set_light(p[:phone])
+      end
     elsif key == "dufg"
-      
-      data_dufg << data
+      users = Group.find(data[:id_group]).users 
+      users.each do |p|
+        data[:indicator] = "dufg"
+        FastBase.set(p[:phone], data.to_json)
+        FastBase.set(p[:need_add_or_del_user], data.to_json)
+        FastBase.set_light(p[:phone])
+        FastBase.set_light(p[:need_add_or_del_user])
+      end
     end
   end
-  puts data_wryg
 end

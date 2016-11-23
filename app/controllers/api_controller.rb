@@ -98,7 +98,7 @@ class ApiController < ApplicationController
     begin
       group = Group.find(data[:id_group])
       if  group.users.map{|e| e[:phone]}.include?(data[:owner]) && !group.users.map{|e| e[:phone]}.include?(data[:need_add_user])
-        group.users << User.where(phone: data[:need_add_user])
+        group.users << User.where(phone: data[:need_add_or_del_user])
         FastBase.set("req|autg", data.to_json)
         request = {status: "OK", method: "add_user_to_group"}
       else
@@ -116,7 +116,7 @@ class ApiController < ApplicationController
     begin
       group = Group.find(data[:id_group])
       if User.find(group[:admin]).phone == data[:owner]
-        group.users.delete(User.where(phone: data[:need_del_user]))
+        group.users.delete(User.where(phone: data[:need_add_or_del_user]))
         FastBase.set("req|dufg", data.to_json)
         request = {status: "OK", method: "del_user_from_group"}
       else
@@ -166,7 +166,7 @@ class ApiController < ApplicationController
   end
 
   def add_del_params
-    params.permit(:owner, :id_group, :need_add_user)
+    params.permit(:owner, :id_group, :need_add_or_del_user)
   end
 
   def leave_params
