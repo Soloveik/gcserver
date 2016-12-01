@@ -3,6 +3,7 @@ class Emulator
   require "socket"
   
   @@SOCKET_SERVER_RESPONSE = "take_your_data"
+  @@SOCKET_SERVER_RESPONSE_2 = "data_is_missing"
   @@SEND_TO_SERVER_SOCKET  = "1234567890gmd?"
   @@API_METHOD_PATH_WRY = "/api/wry"
   @@API_METHOD_PATH_WRYG = "/api/wryg"
@@ -14,9 +15,10 @@ class Emulator
 
   def initialize(user_id, host, api_port, socket_port, target_id)
     @user = User.where(id: user_id).first
-    @user = User.new(phone: "123456789") if !@user
+    @user = User.new(phone: "123456789") if @user.blank?
     @target = target_id
     @target_user = User.where(id: target_id).first
+    @target_user = User.new(phone: "987654321") if @target.blank?
     @groups = @user.groups
     @location = "300x400x500"
     # @user = User.create(phone: [0..9].map{|e| ["a".."z"][rand(25)]}.join) unless @user
@@ -34,17 +36,17 @@ class Emulator
       while((Time.now.to_i - null_time) < sec)
         message("**********************************************")
         message(">>  #{iteration} iteration start")
-        case rand(4)
-        when 0
-          message("|<- " + wry(@target_user).to_s)
-        when 1
-          message("|<- " + wry_group(@groups.first.id).to_s)
-        when 2
-          message("|<- " + im_here(@target_user).to_s)
-        when 3
-          message("|<- " + im_here_group(@groups.first.id).to_s) 
-        else
-        end
+        # case rand(4)
+        # when 0
+        #   message("|<- " + wry(@target_user).to_s)
+        # when 1
+        #   message("|<- " + wry_group(@groups.first.id).to_s)
+        # when 2
+        #   message("|<- " + im_here(@target_user).to_s)
+        # when 3
+        #   message("|<- " + im_here_group(@groups.first.id).to_s) 
+        # else
+        # end
         if knock("#{@host}", @socket_port, @user.phone)
           message("|<- " + get_my_data(@user.phone).to_s)
         end
@@ -107,6 +109,10 @@ class Emulator
           socket.close 
           message("some code after knock true")
           return true
+        elsif result.chop == @@SOCKET_SERVER_RESPONSE_2
+          socket.close 
+          message("some code after knock true without redis")
+          return true
         else
           socket.close
           message("some code after knock false")
@@ -158,7 +164,11 @@ class Emulator
 
   def send_request(path, data)
     begin
-      uri = "http://#{@host}:#{@api_port}#{path}?#{data.to_query}"
+      if @api_port == 80
+        uri = "http://#{@host}#{path}?#{data.to_query}"
+      else
+        uri = "http://#{@host}:#{@api_port}#{path}?#{data.to_query}"
+      end
       url = URI.parse(uri)
       req = Net::HTTP::Get.new(url.to_s)
       res = Net::HTTP.start(url.host, url.port) {|http|
