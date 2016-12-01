@@ -18,8 +18,8 @@ task :socketserver => :environment do
           puts phone
           puts indicate 
           if indicate == "gmd?"
-            iight = FastBase.get_and_del_by_key("light#{phone}")
-            if iight.blank? == false
+            light = FastBase.get_and_del_by_key("light#{phone}")
+            if light.blank? == false
               client.puts "take_your_data"
             else  
               client.puts "data_is_missing"
