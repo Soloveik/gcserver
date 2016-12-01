@@ -14,6 +14,7 @@ class Emulator
 
   def initialize(user_id, host, api_port, socket_port, target_id)
     @user = User.where(id: user_id).first
+    @user = User.new(phone: "123456789") if !@user
     @target = target_id
     @target_user = User.where(id: target_id).first
     @groups = @user.groups

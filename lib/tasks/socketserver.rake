@@ -1,7 +1,12 @@
 require 'socket'
 require "fast_base"
 task :socketserver => :environment do 
-  $server = TCPServer.new('localhost',4001)
+  if Rails.env == "production"
+    host = 'simply.su'
+  else
+    host = 'localhost'
+  end
+  $server = TCPServer.new(host, 4001)
   while 1
     Thread.start($server.accept) do |client|
       begin  
