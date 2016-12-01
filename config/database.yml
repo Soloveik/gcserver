@@ -13,3 +13,11 @@ development:
   database: gcserver
   username: ns
   password: 14156
+
+test:
+  adapter: postgresql
+  encoding: unicode
+  host: localhost
+  database: gcserver
+  username: ns
+  password: 14156

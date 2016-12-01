@@ -2,12 +2,8 @@ require "timer"
 if Rails.env == "production"
   $tasks = [
     {
-      task: "rvm use ruby-2.3.0 do bundle exec rake task1",
+      task: "rvm use ruby-2.3.0 do bundle exec rake resquest_handler",
       timer: 1
-    },
-    {
-      task: "rvm use ruby-2.3.0 do bundle exec rake task2",
-      timer: 3
     }
   ]
 else
