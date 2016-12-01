@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'statistics/index'
+
   get 'main/index'
   match '/testclose', :to => "main#testclose", :as => :testclose, via: [:get, :post]
   match '/start_socket', :to => "main#start_socket", :as => :start_socket, via: [:get, :post]
@@ -18,5 +20,8 @@ Rails.application.routes.draw do
   match '/api/addutg', to: "api#add_user_to_group", as: :add_user_to_group, via: [:get, :post]
   match '/api/delufg', to: "api#del_user_from_group", as: :del_user_from_group, via: [:get, :post]
   match '/api/ltg', to: "api#leave_the_group", as: :leave_the_group, via: [:get, :post]
+  match '/api/mdu', to: "api#my_data_update", as: :my_data_update, via: [:get, :post]
+  # For statistics controller
+  match '/statistics/index', to: "statistics#index", as: :index, via: [:get, :post]
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

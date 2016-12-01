@@ -13,8 +13,8 @@ if Rails.env == "production"
 else
   $tasks = [
     {
-      task: "echo \"123\">>test.gc",
-      timer: 5
+      task: "rake resquest_handler",
+      timer: 3
     }
   ]
 end

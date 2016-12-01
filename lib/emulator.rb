@@ -12,9 +12,11 @@ class Emulator
   @@API_METHOD_PATH_IM = "/api/im"
   @@API_METHOD_PATH_NG = "/api/ng"
 
-  def initialize(user_id, host, api_port, socket_port)
+  def initialize(user_id, host, api_port, socket_port, target_id)
     @user = User.where(id: user_id).first
-    @goups = @user.groups
+    @target = target_id
+    @target_user = User.where(id: target_id).first
+    @groups = @user.groups
     @location = "300x400x500"
     # @user = User.create(phone: [0..9].map{|e| ["a".."z"][rand(25)]}.join) unless @user
     @host = host
@@ -26,34 +28,27 @@ class Emulator
   def cycle(sec)
     begin
       # target = [0..9].map{|e| ["a".."z"][rand(25)]}.join
-      
-      target = User.where(id: rand(@user[:id]..1000))
       iteration = 0
       null_time = Time.now.to_i
       while((Time.now.to_i - null_time) < sec)
-        message(%q{&#8625} + "**********************************************")
+        message("**********************************************")
         message(">>  #{iteration} iteration start")
-        # message(Time.now.to_i - null_time)
-        when rand(3)
-        case 0
-          message("|<- " + wry(target).to_s)
-        case 1
+        case rand(4)
+        when 0
+          message("|<- " + wry(@target_user).to_s)
+        when 1
           message("|<- " + wry_group(@groups.first.id).to_s)
-        case 2
-          message("|<- " + im_here(@groups.first.id).to_s)
-        case 3
-          message("|<- " + im_here_group(target).to_s) 
-        # case 4
-        #   message("|<- " + im(target).to_s)
-        # case 5
-        #   message("|<- " + new_group(target).to_s)
+        when 2
+          message("|<- " + im_here(@target_user).to_s)
+        when 3
+          message("|<- " + im_here_group(@groups.first.id).to_s) 
         else
         end
-
-        if knock("#{@host}", @socket_port)
+        if knock("#{@host}", @socket_port, @user.phone)
           message("|<- " + get_my_data(@user.phone).to_s)
         end
         sleep 1
+        message("<<<#{@user.phone}")
         message("<<  #{iteration} iteration end")
         message("**********************************************\n\n")
         message(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
@@ -100,11 +95,11 @@ class Emulator
     send_request(@@API_METHOD_PATH_NG, data)
   end
 
-  def knock(host, port)
+  def knock(host, port, phone)
     begin
       Timeout.timeout(2) do
         socket = TCPSocket.open(host, port, 2)
-        socket.puts @@SEND_TO_SERVER_SOCKET
+        socket.puts "#{phone}gmd?"
         result = socket.gets
         message "o-> " + result.to_s
         if result.chop == @@SOCKET_SERVER_RESPONSE

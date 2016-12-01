@@ -10,6 +10,10 @@ gem 'therubyracer', platforms: :ruby
 
 gem "russian"
 
+gem 'jquery-rails'
+gem 'jquery-ui-rails'
+gem 'flot-rails', :git => "https://github.com/Kjarrigan/flot-rails.git"
+
 gem 'capistrano'
 gem 'capistrano-rvm'
 gem 'capistrano-bundler'

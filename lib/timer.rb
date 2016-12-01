@@ -1,10 +1,15 @@
 module Daemons
   class Timer
+    require 'timeout'
 
-  @@PIDS_PATH = "pids.gc"
-  @@LOG_PATH = "log/timer_log"
+    if Rails.env == "production"
+      @@PIDS_PATH = "../shared/tmp/pids.gc"
+      @@LOG_PATH = "../shared/log/timer_log"
+    else
+      @@PIDS_PATH = "pids.gc"
+      @@LOG_PATH = "log/timer_log"
+    end
 
-  require 'timeout'
     @@tasks = []
 
     def initialize

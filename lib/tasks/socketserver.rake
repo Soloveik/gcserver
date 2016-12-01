@@ -13,9 +13,7 @@ task :socketserver => :environment do
           puts phone
           puts indicate 
           if indicate == "gmd?"
-            light = FastBase.new
-            light.set_light(phone)
-            iight = light.get_and_del_by_key("light#{phone}")
+            iight = FastBase.get_and_del_by_key("light#{phone}")
             if iight.blank? == false
               client.puts "take_your_data"
             else  
@@ -29,7 +27,8 @@ task :socketserver => :environment do
         end
       rescue Timeout::Error
         client.close
-      rescue 
+      rescue => e
+        puts e
         puts "ERROR"
       end
     end

@@ -1,0 +1,16 @@
+<h1>Statistics#index</h1>
+<%= @curr_hash %>
+<div id = "flot" style = "height: 500px">
+</div>
+<script>
+  var options = {
+    xaxis:{
+      mode: "time"
+    },
+    series: {
+        lines: { show: true },
+        points: { show: true }
+    }
+  };
+  $("#flot").plot(<%= raw @chart_data.as_json %>, options);
+</script>

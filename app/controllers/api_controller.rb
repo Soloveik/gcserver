@@ -7,7 +7,8 @@ class ApiController < ApplicationController
   before_action :new_group_params, only: [:new_group]
   before_action :add_del_params, only: [:add_user_to_group, :del_user_from_group]
   before_action :leave_params, only: [:leave_the_group]
-
+  before_action :update_params, only: [:my_data_update]
+  after_action :set_stat
   
   def wry
     data = wry_params
@@ -38,6 +39,7 @@ class ApiController < ApplicationController
     if !data[:owner].blank? && !data[:target].blank? && !data[:location].blank?
       data[:date] = Time.now.strftime("%d/%m/%Y %H:%M:%S")
       FastBase.set(data[:target], data.to_json)
+      FastBase.set_light(data[:target])
       request = {status: "OK", method: "imh"}
     else
       request = {status: "ERROR", method: "imh"}
@@ -61,6 +63,9 @@ class ApiController < ApplicationController
     data = get_and_im_params
     if !data[:owner].blank?
       data = FastBase.get_and_del_by_key(data[:owner])
+      data = data.map do |p|
+        p = JSON.parse(Crypta.decrypt(p.split("|")[2]))
+      end
       request = {status: "OK", method: "gmd", data: data.to_json}
     else
       request = {status: "ERROR", method: "gmd"}
@@ -147,14 +152,43 @@ class ApiController < ApplicationController
     end
   end
 
+  def my_data_update
+    data = update_params
+    begin
+      user = User.where(phone: data[:owner]).first
+      data_array = []
+      if !user.blank?
+        user.groups.each do |e|
+          users_group = e.users.map{|p| p.phone}
+          data_array << {gid: e[:id], name: e[:name], admin: e[:admin], group_users: users_group}
+        end
+        contacts = User.where(phone: data[:my_contacts]).map{|c| c.phone}
+        request = {status: "OK", method: "my_data_update", data: {groups: data_array, contacts: contacts}}
+      else
+        request = {status: "not found", method: "my_data_update"}
+      end
+      render json: request.to_json
+    rescue ActiveRecord::RecordNotFound
+      request = {status: "ERROR", method: "my_data_update"}
+      render json: request.to_json
+    rescue
+      request = {status: "ERROR", method: "my_data_update"}
+      render json: request.to_json
+    end
+  end
+
   private
+  
+  def set_stat 
+    $redis.hincrby("gcserver|statistics|#{Time.now.strftime("%d.%m.%Y|%H:%M")}", params["action"], 1)
+  end
   
   def wry_params
     params.permit(:owner, :target)
   end
 
   def loc_params
-    params.permit(:owner, :target, :lacation)
+    params.permit(:owner, :target, :location)
   end
 
   def get_and_im_params
@@ -171,6 +205,10 @@ class ApiController < ApplicationController
 
   def leave_params
     params.permit(:owner, :id_group)
+  end
+
+  def update_params
+    params.permit(:owner, :my_contacts => [])
   end
 end
 
