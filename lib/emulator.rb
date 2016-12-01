@@ -15,10 +15,10 @@ class Emulator
 
   def initialize(user_id, host, api_port, socket_port, target_id)
     @user = User.where(id: user_id).first
-    @user = User.new(phone: "123456789") if @user.blank?
+    @user = User.new(phone: "1234567890") if @user.blank?
     @target = target_id
     @target_user = User.where(id: target_id).first
-    @target_user = User.new(phone: "987654321") if @target.blank?
+    @target_user = User.new(phone: "0987654321") if @target.blank?
     @groups = @user.groups
     @location = "300x400x500"
     # @user = User.create(phone: [0..9].map{|e| ["a".."z"][rand(25)]}.join) unless @user
