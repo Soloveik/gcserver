@@ -11,7 +11,7 @@ class MainController < ApplicationController
   def start_socket
     Thread.new{
       if Rails.env == "production"
-        system "rvm use ruby-2.3.0 do bundle exec rake rake socketserver RAILS_ENV=production"
+        system "rvm use ruby-2.3.0 do bundle exec rake socketserver RAILS_ENV=production"
       else
         system "rake socketserver"
       end      
