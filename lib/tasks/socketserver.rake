@@ -1,7 +1,7 @@
 require 'socket'
 require "fast_base"
 task :socketserver => :environment do 
-  # @@LOG_PATH = "~/projects/gcserver/shared/log/socket_income"
+  @@LOG_PATH = "../shared/log/socket_income"
   
   message "Session started #{Time.now.strftime("%d-%m-%Y %H:%m:%S")}\n\n"
 
@@ -49,9 +49,9 @@ end
 
 def message mes
   puts mes
-  # file = File.new(@@LOG_PATH, "a")
-  # file.puts mes
-  # file.close
+  file = File.new(@@LOG_PATH, "a")
+  file.puts mes
+  file.close
 end
 
 
