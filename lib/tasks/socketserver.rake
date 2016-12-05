@@ -1,6 +1,10 @@
 require 'socket'
 require "fast_base"
 task :socketserver => :environment do 
+  @@LOG_PATH = "../shared/log/timer_log"
+  
+  message "Session started #{Time.now.strftime("%d-%m-%Y %H:%m:%S")}\n\n"
+
   if Rails.env == "production"
     host = 'simply.su'
   else
@@ -12,6 +16,7 @@ task :socketserver => :environment do
       begin  
         Timeout.timeout(3) do
           result = client.gets
+          message "income data <- | " + result.to_s + " |\n"
           result = result.chop
           indicate = result[10..14]
           phone = result[0..9]
@@ -38,6 +43,14 @@ task :socketserver => :environment do
       end
     end
   end
+
+  
+end
+
+def message mes
+  file = File.new(@@LOG_PATH, "a")
+  file.puts mes
+  file.close
 end
 
 
