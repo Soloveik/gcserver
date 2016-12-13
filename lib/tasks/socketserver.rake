@@ -1,15 +1,17 @@
 require 'socket'
 require "fast_base"
 task :socketserver => :environment do 
-  @@LOG_PATH = "../../shared/log/socket_income"
   
-  message "Session started #{Time.now.strftime("%d-%m-%Y %H:%m:%S")}\n\n"
-
   if Rails.env == "production"
     host = 'simply.su'
+    @@LOG_PATH = "../../shared/log/socket_info"
   else
     host = 'localhost'
+    @@LOG_PATH = "log/socket_info"
   end
+  
+  message "Session started #{Time.now.strftime("%d-%m-%Y %H:%m:%S")}\n\n"
+  
   $server = TCPServer.new(host, 4001)
   while 1
     Thread.start($server.accept) do |client|
